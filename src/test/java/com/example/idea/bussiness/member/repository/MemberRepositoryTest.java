@@ -1,9 +1,9 @@
-package com.example.idea.member.repository;
+package com.example.idea.bussiness.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.idea.IdeaApplication;
-import com.example.idea.member.entity.Member;
+import com.example.idea.bussiness.member.entity.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

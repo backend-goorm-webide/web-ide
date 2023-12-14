@@ -1,6 +1,6 @@
-package com.example.idea.member.entity;
+package com.example.idea.bussiness.member.entity;
 
-import com.example.idea.domain.entity.BaseDateTimeEntity;
+import com.example.idea.common.entity.BaseDateTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.example.idea.domain.entity;
+package com.example.idea.common.entity;
 
 
 import jakarta.persistence.Column;
