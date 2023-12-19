@@ -1,4 +1,4 @@
-package com.example.idea.bussiness.member.entity;
+package com.example.idea.bussiness.user.entity;
 
 import com.example.idea.common.entity.BaseDateTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-//@Table(name = "IDE_MEMBER")
+@Table(name = "USERS")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +27,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @JsonIgnoreProperties({ "pwd" })
 @Getter
 @ToString
-public class Member extends BaseDateTimeEntity implements Serializable {
+public class User extends BaseDateTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
