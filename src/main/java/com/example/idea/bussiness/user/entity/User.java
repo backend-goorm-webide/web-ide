@@ -46,7 +46,7 @@ public class User extends BaseDateTimeEntity implements Serializable {
     @Column(nullable = false)
     private String email; // 이메일
 
-    @Column(nullable = false, length = 16)
+    @Column(length = 16)
     private String phone; // 휴대폰 번호
 
     @Column(name = "last_login_at", nullable = true, columnDefinition = "TIMESTAMP")
