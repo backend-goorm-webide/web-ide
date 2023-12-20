@@ -1,5 +1,6 @@
 package com.example.idea.bussiness.user.entity;
 
+import com.example.idea.bussiness.user.dto.UserDto;
 import com.example.idea.common.entity.BaseDateTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,8 +26,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
-@JsonIgnoreProperties({ "pwd" })
+@JsonIgnoreProperties({"pwd"})
 @Getter
+@Setter
 @ToString
 public class User extends BaseDateTimeEntity implements Serializable {
 
@@ -37,7 +40,7 @@ public class User extends BaseDateTimeEntity implements Serializable {
     @Column(nullable = false, unique = true)
     private String userId; // 사용자ID
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String pwd; // 패스워드
 
     @Column(nullable = false, length = 100)
@@ -55,4 +58,14 @@ public class User extends BaseDateTimeEntity implements Serializable {
 
     @Column
     private boolean isWithdrawn; // 탈퇴여부
+
+    public static User toUserEntity(UserDto userDto) { //dto -> entity
+        User user = new User();
+        user.setUserId(userDto.getUserId());
+        user.setPwd(userDto.getPwd());
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setPhone(userDto.getPhone());
+        return user;
+    }
 }
