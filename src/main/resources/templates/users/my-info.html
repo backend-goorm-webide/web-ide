@@ -14,10 +14,10 @@
         <p>이메일: <span th:text="${userDto.email}"></span></p>
         <p>휴대폰 번호: <span th:text="${userDto.phone}"></span></p>
 
-        <!-- 회원 탈퇴 폼 -->
-        <form action="/users/delete" method="post">
-            <input type="hidden" name="userId" th:value="${userDto.userId}">
-            <button type="submit">회원 탈퇴</button>
+        <form id="withdrawForm" action="/users/delete/{userId}" method="post" onsubmit="return confirm('정말로 회원을 탈퇴하시겠습니까?');">
+            <input type="hidden" name="_method" value="DELETE">
+
+            <input type="submit" value="회원 탈퇴">
         </form>
     </div>
 </div>

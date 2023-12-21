@@ -3,9 +3,12 @@ package com.example.idea.bussiness.user.service;
 import com.example.idea.bussiness.user.dto.UserDto;
 import com.example.idea.bussiness.user.entity.User;
 import com.example.idea.bussiness.user.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -18,10 +21,25 @@ public class UserService {
 
     // 회원가입
     public void join(UserDto userDto) {
-        User result = User.toUserEntity(userDto);
-        validateDuplicateMember(result);
-        userRepository.save(result);
+        User user = User.toUserEntity(userDto);
+        validateDuplicateMember(user);
+        userRepository.save(user);
     }
+
+
+    // 아이디 중복 확인
+    private void validateDuplicateMember(User user) { // 내부 로직에서 중복 방지
+        userRepository.findByUserId(user.getUserId())
+                .ifPresent(m -> {
+                    throw new IllegalStateException("이미 사용중인 아이디입니다.");
+                });
+    }
+
+    public boolean isUserIdDuplicate(String userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
+        return user.isPresent(); // 사용자가 존재하면 true, 그렇지 않으면 false 반환
+    }
+
 
     // 유효성 체크 (실패한 필드들은 키값과 에러 메시지를 응답)
     @Transactional(readOnly = true)
@@ -36,13 +54,6 @@ public class UserService {
         return validatorResult;
     }
 
-    // 아이디 중복 확인
-    private void validateDuplicateMember(User user) {
-        userRepository.findByUserId(user.getUserId())
-                .ifPresent(m -> {
-                    throw new IllegalStateException("이미 존재하는 회원입니다.");
-                });
-    }
 
     // 내 정보 조회
     public UserDto findByUserId(String userId) {
@@ -55,5 +66,26 @@ public class UserService {
                 .phone(user.getPhone())
                 .build();
     }
+
+    // 회원 탈퇴
+    public void deleteUser(String userId) {
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setWithdrawn(true); // 회원 탈퇴 여부를 true로 설정
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("회원을 찾을 수 없습니다: " + userId);
+        }
+    }
+
+    // 1년동안 로그인 하지 않으면 회원 삭제
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행되도록 스케줄링 설정
+    public void deleteExpiredMembers() {
+        LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
+        userRepository.deleteByLastLoginDate(oneYearAgo);
+    }
 }
+
 

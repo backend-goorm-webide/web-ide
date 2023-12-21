@@ -6,11 +6,17 @@ import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -44,6 +50,13 @@ public class UserController {
         return "redirect:/";
     }
 
+    // 아이디 중복 확인
+    @GetMapping("/users/check-Id")
+    public ResponseEntity<?> checkDuplicateUserId(@RequestParam String userId) {
+        boolean isDuplicate = userService.isUserIdDuplicate(userId);
+        return ResponseEntity.ok().body(Map.of("isDuplicate", isDuplicate));
+    }
+
     // 내 정보 조회
     @GetMapping("/users/my-info")
     public String viewProfile(Model model, Principal principal) {
@@ -52,5 +65,18 @@ public class UserController {
         UserDto userDto = userService.findByUserId(userId);
         model.addAttribute("userDto", userDto);
         return "users/my-info";
+    }
+
+    // 회원 탈퇴
+
+    @DeleteMapping("/users/delete/{userId}")
+    public ResponseEntity<String> deleteUser(Principal principal) {
+        String userId = principal.getName();
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("회원 탈퇴가 성공적으로 처리되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

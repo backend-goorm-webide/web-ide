@@ -26,7 +26,7 @@ public class UserDto {
     private String pwd; // 패스워드
 
     @NotNull(message = "이름은 필수 입력 값입니다.")
-    @Pattern(regexp = "^[가-힣_]{1,100}$", message = "이름 형식이 올바르지 않습니다.")
+    @Pattern(regexp = "^[가-힣_]{1,10}$", message = "이름 형식이 올바르지 않습니다.")
     private String name; // 이름
 
     @NotNull(message = "이메일은 필수 입력 값입니다.")
