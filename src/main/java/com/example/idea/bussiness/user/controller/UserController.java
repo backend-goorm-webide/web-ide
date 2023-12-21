@@ -3,6 +3,7 @@ package com.example.idea.bussiness.user.controller;
 import com.example.idea.bussiness.user.dto.UserDto;
 import com.example.idea.bussiness.user.service.UserService;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 
 @Controller
 @RequiredArgsConstructor
@@ -42,5 +42,15 @@ public class UserController {
         }
         userService.join(userDto);
         return "redirect:/";
+    }
+
+    // 내 정보 조회
+    @GetMapping("/users/my-info")
+    public String viewProfile(Model model, Principal principal) {
+        String userId = principal.getName(); // 현재 로그인한 사용자의 아이디
+
+        UserDto userDto = userService.findByUserId(userId);
+        model.addAttribute("userDto", userDto);
+        return "users/my-info";
     }
 }

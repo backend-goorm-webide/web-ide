@@ -10,3 +10,4 @@ public class IdeaApplication {
         SpringApplication.run(IdeaApplication.class, args);
     }
 }
+

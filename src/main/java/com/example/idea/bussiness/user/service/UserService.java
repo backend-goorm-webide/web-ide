@@ -5,7 +5,6 @@ import com.example.idea.bussiness.user.entity.User;
 import com.example.idea.bussiness.user.repository.UserRepository;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +42,18 @@ public class UserService {
                 .ifPresent(m -> {
                     throw new IllegalStateException("이미 존재하는 회원입니다.");
                 });
+    }
+
+    // 내 정보 조회
+    public UserDto findByUserId(String userId) {
+        User user = userRepository.findByUserId(userId).orElse(null);
+        return UserDto.builder()
+                .id(user.getId())
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .build();
     }
 }
 
