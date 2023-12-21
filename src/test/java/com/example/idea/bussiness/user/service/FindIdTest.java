@@ -34,7 +34,7 @@ public class FindIdTest {
         String email = "hong@example.com";
         User mockUser = new User();
         mockUser.setUserId("user123");
-        when(userRepository.findId(name, email)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByIdAndEmail(name, email)).thenReturn(Optional.of(mockUser));
 
         // 실행
         UserDto result = userService.findUserId(name, email);
@@ -49,7 +49,7 @@ public class FindIdTest {
         // 가정: 사용자가 존재하지 않는 경우
         String name = "이순신";
         String email = "lee@example.com";
-        when(userRepository.findId(name, email)).thenReturn(Optional.empty());
+        when(userRepository.findByIdAndEmail(name, email)).thenReturn(Optional.empty());
 
         // 실행 및 검증
         assertThrows(ResponseStatusException.class, () -> {

@@ -26,8 +26,7 @@ public class UserService {
         User user = User.toUserEntity(userDto);
 
         if (isUserIdDuplicate(user.getUserId())) {
-            throw new IllegalStateException("이미 사용중인 아이디입니다.");
-        }
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 사용중인 아이디입니다.");        }
         userRepository.save(user);
     }
 
@@ -90,7 +89,7 @@ public class UserService {
 
     // 아이디 찾기
     public UserDto findUserId(String name, String email) {
-        Optional<User> userOptional = userRepository.findId(name, email);
+        Optional<User> userOptional = userRepository.findByIdAndEmail(name, email);
 
         return userOptional.map(user -> {
             return UserDto.builder()
