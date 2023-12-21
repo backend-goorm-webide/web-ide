@@ -64,4 +64,18 @@ public class UserController {
         userService.deleteUser(userId);
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 처리되었습니다.");
     }
+
+    // 아이디 찾기
+    @GetMapping("/find-id")
+    public ResponseEntity<?> findUserId(
+            @RequestParam String name,
+            @RequestParam String email
+    ) {
+        UserDto foundUserId = userService.findUserId(name, email);
+        if (foundUserId != null) {
+            return ResponseEntity.ok(foundUserId);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("아이디를 찾을 수 없습니다.");
+        }
+    }
 }

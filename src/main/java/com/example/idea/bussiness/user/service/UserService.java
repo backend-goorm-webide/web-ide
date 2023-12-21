@@ -8,18 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
 
-    // 회원가입
+    // 회원 가입
     public void join(UserDto userDto) {
         User user = User.toUserEntity(userDto);
 
@@ -50,14 +52,20 @@ public class UserService {
 
     // 내 정보 조회
     public UserDto findByUserId(String userId) {
-        User user = userRepository.findByUserId(userId).orElse(null);
-        return UserDto.builder()
-                .id(user.getId())
-                .userId(user.getUserId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .build();
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return UserDto.builder()
+                    .id(user.getId())
+                    .userId(user.getUserId())
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .phone(user.getPhone())
+                    .build();
+        } else {
+            throw new RuntimeException("회원을 찾을 수 없습니다: " + userId);
+        }
     }
 
     // 회원 탈퇴
@@ -78,6 +86,17 @@ public class UserService {
     public void deleteExpiredMembers() {
         LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
         userRepository.deleteByLastLoginDate(oneYearAgo);
+    }
+
+    // 아이디 찾기
+    public UserDto findUserId(String name, String email) {
+        Optional<User> userOptional = userRepository.findId(name, email);
+
+        return userOptional.map(user -> {
+            return UserDto.builder()
+                    .userId(user.getUserId())
+                    .build();
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."));
     }
 }
 
