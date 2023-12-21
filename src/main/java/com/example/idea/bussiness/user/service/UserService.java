@@ -22,38 +22,31 @@ public class UserService {
     // 회원가입
     public void join(UserDto userDto) {
         User user = User.toUserEntity(userDto);
-        validateDuplicateMember(user);
+
+        if (isUserIdDuplicate(user.getUserId())) {
+            throw new IllegalStateException("이미 사용중인 아이디입니다.");
+        }
         userRepository.save(user);
     }
 
-
     // 아이디 중복 확인
-    private void validateDuplicateMember(User user) { // 내부 로직에서 중복 방지
-        userRepository.findByUserId(user.getUserId())
-                .ifPresent(m -> {
-                    throw new IllegalStateException("이미 사용중인 아이디입니다.");
-                });
-    }
-
     public boolean isUserIdDuplicate(String userId) {
         Optional<User> user = userRepository.findByUserId(userId);
         return user.isPresent(); // 사용자가 존재하면 true, 그렇지 않으면 false 반환
     }
 
-
     // 유효성 체크 (실패한 필드들은 키값과 에러 메시지를 응답)
     @Transactional(readOnly = true)
-    public Map<String, String> validateHandling(Errors errors) {
+    public Map<String, String> validationErrors(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
 
-        /* 유효성 검사에 실패한 필드 목록을 받음 */
+        // 유효성 검사에 실패한 필드 목록을 받음
         for (FieldError error : errors.getFieldErrors()) {
             String validKeyName = String.format("valid_%s", error.getField());
             validatorResult.put(validKeyName, error.getDefaultMessage());
         }
         return validatorResult;
     }
-
 
     // 내 정보 조회
     public UserDto findByUserId(String userId) {

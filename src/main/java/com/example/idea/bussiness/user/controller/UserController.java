@@ -8,8 +8,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,16 +29,15 @@ public class UserController {
     public ResponseEntity<?> join(@Valid @RequestBody UserDto userDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             // 유효성 검사 에러가 있을 때의 처리
-            Map<String, String> validatorResult = userService.validateHandling(bindingResult);
+            Map<String, String> validatorResult = userService.validationErrors(bindingResult);
             return ResponseEntity.badRequest().body(validatorResult);
         }
         userService.join(userDto);
         return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
     }
 
-
     // 아이디 중복 확인
-    @GetMapping("/check-Id")
+    @PostMapping("/check-Id")
     public ResponseEntity<?> checkDuplicateUserId(@RequestParam String userId) {
         boolean isDuplicate = userService.isUserIdDuplicate(userId);
         return ResponseEntity.ok().body(Map.of("isDuplicate", isDuplicate));
