@@ -11,7 +11,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUserId(String userId);
 
     Optional<User> findByUserId(String userId);
+
     Optional<User> findByNameAndEmail(String name, String email);
 
-    void deleteByLastLoginDate(LocalDateTime oneYearAgo); // 마지막 로그인 1년 지나면 회원 삭제
+    void deleteByLastLoginDateBefore(LocalDateTime OneYearAgo); // 마지막 로그인 1년 지나면 회원 삭제
 }

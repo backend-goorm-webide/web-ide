@@ -90,10 +90,11 @@ public class UserService {
     }
 
     // 1년동안 로그인 하지 않으면 회원 삭제
+    @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행되도록 스케줄링 설정
-    public void deleteExpiredMembers() {
-        LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
-        userRepository.deleteByLastLoginDate(oneYearAgo);
+    public void deleteExpiredUser() {
+        LocalDateTime OneYearAgo = LocalDateTime.now().minusYears(1);
+        userRepository.deleteByLastLoginDateBefore(OneYearAgo);
     }
 
     // 아이디 찾기
