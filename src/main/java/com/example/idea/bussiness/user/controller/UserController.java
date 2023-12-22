@@ -63,7 +63,7 @@ public class UserController {
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId, Principal principal) {
         if (principal == null || !principal.getName().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
         }
         userService.deleteUser(userId);
         return ResponseEntity.ok("회원 탈퇴가 성공적으로 처리되었습니다.");
