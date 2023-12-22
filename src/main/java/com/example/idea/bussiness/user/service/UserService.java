@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,29 +24,36 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 회원 가입
-    public void join(UserDto userDto) {
-        User user = User.toUserEntity(userDto);
+    public void join(UserDto userDto, BindingResult bindingResult) {
+        // 유효성 검사 실패 처리
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = validationErrors(bindingResult);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errors.toString());
+        }
+        // 아이디 중복 체크
+        if (isUserIdDuplicate(userDto.getUserId())) {
+            throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
+        }
 
-        if (isUserIdDuplicate(user.getUserId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 사용중인 아이디입니다.");        }
-        userRepository.save(user);
+        try {
+            User user = User.toUserEntity(userDto);
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 예외 처리
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "데이터 무결성 위반: " + e.getMessage());
+        }
     }
 
     // 아이디 중복 확인
     public boolean isUserIdDuplicate(String userId) {
-        Optional<User> user = userRepository.findByUserId(userId);
-        return user.isPresent(); // 사용자가 존재하면 true, 그렇지 않으면 false 반환
+        return userRepository.existsByUserId(userId);
     }
 
-    // 유효성 체크 (실패한 필드들은 키값과 에러 메시지를 응답)
-    @Transactional(readOnly = true)
+    // 유효성 체크
     public Map<String, String> validationErrors(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
-
-        // 유효성 검사에 실패한 필드 목록을 받음
         for (FieldError error : errors.getFieldErrors()) {
-            String validKeyName = String.format("valid_%s", error.getField());
-            validatorResult.put(validKeyName, error.getDefaultMessage());
+            validatorResult.put(error.getField(), error.getDefaultMessage());
         }
         return validatorResult;
     }
@@ -89,7 +98,7 @@ public class UserService {
 
     // 아이디 찾기
     public UserDto findUserId(String name, String email) {
-        Optional<User> userOptional = userRepository.findByIdAndEmail(name, email);
+        Optional<User> userOptional = userRepository.findByNameAndEmail(name, email);
 
         return userOptional.map(user -> {
             return UserDto.builder()

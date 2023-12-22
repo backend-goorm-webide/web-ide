@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User save(User user);
+
+    boolean existsByUserId(String userId);
+
     Optional<User> findByUserId(String userId);
-    Optional<User> findByIdAndEmail(String name, String email);
+    Optional<User> findByNameAndEmail(String name, String email);
 
     void deleteByLastLoginDate(LocalDateTime oneYearAgo); // 마지막 로그인 1년 지나면 회원 삭제
 }

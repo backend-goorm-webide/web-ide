@@ -30,7 +30,7 @@ public class UserDto {
     private String name; // 이름
 
     @NotNull(message = "이메일은 필수 입력 값입니다.")
-    @Email(message = "올바른 이메일 주소를 입력하세요.")
+    @Email(message = "이메일 형식이 올바르지 않습니다.")
     private String email; // 이메일
 
     @Pattern(regexp = "^01\\d{8,9}$", message = "휴대전화번호 형식이 올바르지 않습니다.")

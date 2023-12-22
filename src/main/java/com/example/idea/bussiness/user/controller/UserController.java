@@ -28,16 +28,20 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<?> join(@Valid @RequestBody UserDto userDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // 유효성 검사 에러가 있을 때의 처리
             Map<String, String> validatorResult = userService.validationErrors(bindingResult);
             return ResponseEntity.badRequest().body(validatorResult);
         }
-        userService.join(userDto);
-        return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
+
+        try {
+            userService.join(userDto, bindingResult);
+            return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // 아이디 중복 확인
-    @PostMapping("/check-Id")
+    @GetMapping("/check-Id")
     public ResponseEntity<?> checkDuplicateUserId(@RequestParam String userId) {
         boolean isDuplicate = userService.isUserIdDuplicate(userId);
         return ResponseEntity.ok().body(Map.of("isDuplicate", isDuplicate));
