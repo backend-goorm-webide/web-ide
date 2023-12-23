@@ -31,7 +31,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @JsonIgnoreProperties({ "pwd" })
 @Getter
 @ToString
-public class User extends BaseDateTimeEntity implements Serializable {
+public class Users extends BaseDateTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,8 +62,8 @@ public class User extends BaseDateTimeEntity implements Serializable {
 
     @ManyToMany
     @JoinTable(
-            name = "user_authority",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
+            name = "USER_AUTHORITY",
+            joinColumns = {@JoinColumn(name = "usersId", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "authorityName", referencedColumnName = "authorityName")})
     private Set<Authority> authorities;
 }

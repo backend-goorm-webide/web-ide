@@ -12,6 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenDto {
-
+    // 응답할 토큰
     private String token;
 }

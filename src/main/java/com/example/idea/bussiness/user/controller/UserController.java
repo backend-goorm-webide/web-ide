@@ -2,6 +2,9 @@ package com.example.idea.bussiness.user.controller;
 
 // 회원 가입 및 사용자 정보 조회 controller
 
+import com.example.idea.bussiness.user.dto.UserAuthDto;
+import com.example.idea.bussiness.user.entity.Users;
+import com.example.idea.bussiness.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,22 +22,35 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<User> signup(
-            @Valid @RequestBody UserDto userDto
+    @PostMapping("/users/join")
+    public ResponseEntity<Users> signup(
+            @Valid @RequestBody UserAuthDto userAuthDto
     ) {
-        return ResponseEntity.ok(userService.signup(userDto));
+        return ResponseEntity.ok(userService.join(userAuthDto));
     }
 
-    @GetMapping("/user")
+    @GetMapping("/users/my-info")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<User> getMyUserInfo() {
+    public ResponseEntity<Users> getMyUserInfo() {
         return ResponseEntity.ok(userService.getMyUserWithAuthorities().get());
     }
 
-    @GetMapping("/user/{username}")
+//    @GetMapping("/user/{username}")
+    @GetMapping("/user/info/{username}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<User> getUserInfo(@PathVariable String username) {
+    public ResponseEntity<Users> getUserInfo(@PathVariable String username) {
         return ResponseEntity.ok(userService.getUserWithAuthorities(username).get());
+    }
+
+    @GetMapping("/adm/test")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<String> admin() {
+        return ResponseEntity.ok("{test : user}");
+    }
+
+    @GetMapping("/user/test")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<String> user() {
+        return ResponseEntity.ok("{test : user}");
     }
 }

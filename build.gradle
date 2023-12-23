@@ -42,9 +42,13 @@ dependencies {
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.3'
-	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.3'
-	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.3'
+//	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.3'
+//	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.3'
+//	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.3'
+//	Jwts.parserBuilder()에서 Cannot resolve method 'parserBuilder' in 'Jwts' 라고 나오는 이슈로 버전을 낮춤.
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
 }
 
